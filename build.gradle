@@ -1,0 +1,37 @@
+buildscript {
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+sourceCompatibility = 15
+targetCompatibility = 15
+
+javafx {
+    version = "14"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing']
+}
+
+mainClassName = 'editor.Editor'
+
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'com.displee:rs-cache-library:6.6'
+}
