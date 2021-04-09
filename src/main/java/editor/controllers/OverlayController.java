@@ -7,13 +7,19 @@ import editor.rs.Overlay;
 import editor.utils.ColorUtils;
 import editor.wrapper.TextureWrapper;
 import javafx.animation.Interpolator;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 import java.awt.image.BufferedImage;
@@ -59,8 +65,6 @@ public class OverlayController implements Initializable {
         List<Overlay> overlays = OverlayLoader.decode();
         items.addAll(overlays);
         textures = TextureLoader.loadTextures();
-        overlays.sort(Comparator.comparingInt(Overlay::getTexture));
-        overlays.sort(Comparator.comparingInt(Overlay::getColor));
         overlays.forEach(overlayView.getItems()::add);
         textures.forEach(texturesView.getItems()::add);
         interpolatorChoiceBox.getItems()
@@ -79,6 +83,8 @@ public class OverlayController implements Initializable {
                 return null;
             }
         });
+
+        texturesView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     private List<Color> generateColors() {
@@ -114,7 +120,11 @@ public class OverlayController implements Initializable {
 
     private void initListeners() {
         texturesView.setOnMouseClicked(x -> {
-            textureField.setText(String.valueOf(texturesView.getSelectionModel().getSelectedItem().getId()));
+            if (texturesView.getSelectionModel().getSelectedItem() != null) {
+                textureField.setText(String.valueOf(texturesView.getSelectionModel()
+                        .getSelectedItem()
+                        .getId()));
+            }
         });
 
         colorPicker.valueProperty().addListener(x -> {
@@ -124,16 +134,22 @@ public class OverlayController implements Initializable {
         });
 
         addButton.setOnMouseClicked(x -> {
-            Overlay overlay = new Overlay();
-            if (!textureField.getText().isEmpty()) {
-                overlay.setTexture(Integer.parseInt(textureField.getText()));
+            if (texturesView.getSelectionModel().getSelectedItems() != null) {
+                texturesView.getSelectionModel().getSelectedItems().forEach(texture -> {
+                    Overlay overlay = new Overlay();
+                    overlay.setTexture(texture.getId());
+                    overlayView.getItems().add(overlay);
+                    items.add(overlay);
+                    System.out.println("added " + overlay.getTexture());
+                });
             } else {
+                Overlay overlay = new Overlay();
                 int color = Integer.parseInt(colorField.getText());
                 overlay.setColor(color);
+                overlayView.getItems().add(overlay);
+                items.add(overlay);
             }
 
-            overlayView.getItems().add(overlay);
-            items.add(overlay);
         });
 
         addColorsButton.setOnMouseClicked(x -> {
@@ -190,8 +206,9 @@ public class OverlayController implements Initializable {
                     setGraphic(null);
                 } else {
 
-                    if (textures.size() > item.getTexture() && item.getTexture() != -1) {
-                        int id = item.getTexture() > 50 ? item.getTexture() - 1 : item.getTexture();
+                    if (textures.size() > item.getTexture() && item.getTexture() != -1 && item.getTexture() == textures.get(item
+                            .getTexture()).getId()) {
+                        int id = item.getTexture();
                         BufferedImage img = textures.get(id).getImage().toBufferedImage();
                         ImageView imageView = new ImageView();
                         imageView.setFitWidth(32);

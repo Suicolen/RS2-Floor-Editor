@@ -7,7 +7,7 @@ import javafx.stage.DirectoryChooser;
 
 import java.io.File;
 
-public class CacheLoader {
+public class CacheLoader { // meh
 
     public static CacheLibrary cache;
     public static Archive configArchive;

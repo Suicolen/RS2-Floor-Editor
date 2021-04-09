@@ -11,6 +11,8 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.StringConverter;
+import javafx.util.converter.BooleanStringConverter;
+import javafx.util.converter.IntegerStringConverter;
 
 import java.net.URL;
 import java.util.*;
@@ -36,8 +38,10 @@ public class UnderlayController implements Initializable {
 
     @FXML
     private ChoiceBox<Interpolator> interpolatorChoiceBox;
+
     @FXML
     private Button addButton, packButton, addColorsButton;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -45,6 +49,7 @@ public class UnderlayController implements Initializable {
         underlays.addAll(data);
         data.sort(Comparator.comparingInt(Underlay::getRgb));
         underlayView.getItems().setAll(data);
+
         interpolatorChoiceBox.getItems()
                 .addAll(Interpolator.LINEAR, Interpolator.DISCRETE, Interpolator.EASE_IN, Interpolator.EASE_OUT, Interpolator.EASE_BOTH);
         interpolatorChoiceBox.setConverter(new StringConverter<>() {
@@ -59,6 +64,7 @@ public class UnderlayController implements Initializable {
                 return null;
             }
         });
+
         setupCellFactory();
         initListeners();
     }
@@ -164,7 +170,8 @@ public class UnderlayController implements Initializable {
                     rectangle.setStroke(Color.BLACK);
                     rectangle.setStrokeWidth(1);
                     setGraphic(rectangle);
-                    setText("RGB: " + ColorUtils.getRed(rgb) + " | " + ColorUtils.getGreen(rgb) + " | " + ColorUtils.getBlue(rgb));
+                    setText("RGB: " + ColorUtils.getRed(rgb) + " | " + ColorUtils.getGreen(rgb) + " | " + ColorUtils
+                            .getBlue(rgb));
                 }
 
             }

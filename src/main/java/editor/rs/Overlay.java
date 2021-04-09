@@ -31,7 +31,7 @@ public class Overlay {
 
 
     public static void encode(List<Overlay> overlays) throws IOException {
-        DataOutputStream buffer = new DataOutputStream(new FileOutputStream(new java.io.File("./flo2.dat")));
+        DataOutputStream buffer = new DataOutputStream(new FileOutputStream("./flo2.dat"));
         buffer.writeShort(overlays.size());
         for (Overlay overlay : overlays) {
 
@@ -44,7 +44,7 @@ public class Overlay {
             }
 
             if (overlay.getTexture() != -1) {
-                if (overlay.getTexture() > 127) {
+                if (overlay.getTexture() > 255) {
                     buffer.write(3);
                     buffer.writeShort(overlay.getTexture());
                 } else {
@@ -52,6 +52,7 @@ public class Overlay {
                     buffer.write(overlay.getTexture());
 
                 }
+                buffer.writeByte(overlay.getTexture() > 50 ? 1 : 0);
             }
 
             buffer.write(0);
@@ -71,8 +72,10 @@ public class Overlay {
                 color = ((byteBuffer.get() & 0xff) << 16) + ((byteBuffer.get() & 0xff) << 8) + (byteBuffer.get() & 0xff);
             } else if (opcode == 2) {
                 texture = byteBuffer.get() & 0xff;
+               // byteBuffer.get();
             } else if (opcode == 3) {
                 texture = byteBuffer.getShort() & 0xffff;
+              //  byteBuffer.get();
                 if (texture == 65535) {
                     texture = -1;
                 }

@@ -18,9 +18,6 @@ public class OverlayLoader {
         for (int i = 0; i < count; i++) {
             Overlay overlay = new Overlay();
             overlay.decode(buffer);
-            if (i == 113) {
-                overlay.setTexture(25);
-            }
             overlays.add(overlay);
         }
         return overlays;

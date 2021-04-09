@@ -69,7 +69,7 @@ public final class RSSprite {
         RSSprite sprite = new RSSprite();
 
         // position of the current image archive within the archive
-        int offset = dataBuffer.getShort() & 0xFFFF;
+        int offset = newFormat ? dataBuffer.getInt() : dataBuffer.getShort() & 0xFFFF;
         indicesBuffer.position(offset);
 
         // the maximum width the images in this archive can scale to
@@ -134,7 +134,7 @@ public final class RSSprite {
                 raster[index] = sprite.palette[newFormat ? dataBuffer.getShort() & 0xFFFF : dataBuffer.get() & 0xFF];
                 //System.err.println("Decoded color: " + raster[index]);
             }
-        } else if (sprite.getFormat() == 1) { // read vertically
+        } else { // read vertically
             for (int x = 0; x < sprite.getWidth(); x++) {
                 for (int y = 0; y < sprite.getHeight(); y++) {
                     raster[x + y * sprite.getWidth()] = sprite.palette[newFormat ? dataBuffer.getShort() & 0xFFFF : dataBuffer.get() & 0xFF];
